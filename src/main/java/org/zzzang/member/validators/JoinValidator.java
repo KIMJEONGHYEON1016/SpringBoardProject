@@ -1,14 +1,20 @@
 package org.zzzang.member.validators;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zzzang.global.validators.MobileValidator;
 import org.zzzang.global.validators.PasswordValidator;
 import org.zzzang.member.controllers.RequestJoin;
+import org.zzzang.member.repositories.MemberRepository;
 
 @Component
+@RequiredArgsConstructor
 public class JoinValidator implements Validator, PasswordValidator, MobileValidator {
+
+    private final MemberRepository memberRepository;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.isAssignableFrom(RequestJoin.class);
@@ -31,6 +37,11 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
         String password = form.getPassword();
         String confirmPassword = form.getConfirmPassword();
         String mobile = form.getMobile();
+
+         // 1. 이미 가입된 회원인지 체크
+        if (memberRepository.exists(email)) {
+            errors.rejectValue("email", "Duplicated");
+        }
 
          // 2. 비밀번호, 비밀번호 확인 일치 여부
         if (!password.equals(confirmPassword)) {

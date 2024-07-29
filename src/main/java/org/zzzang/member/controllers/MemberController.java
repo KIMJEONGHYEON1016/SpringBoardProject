@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zzzang.member.sevices.MemberSaveService;
 import org.zzzang.member.validators.JoinValidator;
 
 @Controller
@@ -16,6 +17,7 @@ import org.zzzang.member.validators.JoinValidator;
 public class MemberController {
 
     private final JoinValidator joinValidator;
+    private final MemberSaveService memberSaveService;
 
     @GetMapping("/join")
     public String join(@ModelAttribute RequestJoin form) {
@@ -31,6 +33,8 @@ public class MemberController {
         if (errors.hasErrors()) {
            return "front/member/join";
         }
+
+        memberSaveService.save(form);   // 회원 가입 처리
 
         return "redirect:/member/login";
     }

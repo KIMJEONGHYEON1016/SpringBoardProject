@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
 
     /**
-     * <input type="hidden" name="_method" value="PATCH"> -> PATCh 방식으로 요청
+     * <input type="hidden" name="_method" value="PATCH"> -> PATCH 방식으로 요청
      * @return
      */
     @Bean
