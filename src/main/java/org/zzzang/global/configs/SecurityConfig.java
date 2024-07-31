@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.zzzang.member.sevices.LoginFailureHandler;
+import org.zzzang.member.sevices.LoginSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -18,8 +20,8 @@ public class SecurityConfig {
             f.loginPage("/member/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .successForwardUrl("/")
-                    .failureUrl("/member/login?error=true");
+                    .successHandler(new LoginSuccessHandler())
+                    .failureHandler(new LoginFailureHandler());
         });
 
         http.logout(f -> {
