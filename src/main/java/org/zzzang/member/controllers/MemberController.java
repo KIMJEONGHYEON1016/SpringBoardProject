@@ -4,33 +4,23 @@ package org.zzzang.member.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.zzzang.board.entities.Board;
-import org.zzzang.board.repositories.BoardRepository;
-import org.zzzang.member.MemberInfo;
-import org.zzzang.member.MemberUtil;
+import org.zzzang.global.exceptions.ExceptionProcessor;
 import org.zzzang.member.sevices.MemberSaveService;
 import org.zzzang.member.validators.JoinValidator;
-
-import java.security.Principal;
 
 @Slf4j
 @Controller
 @RequestMapping("/member")
 @RequiredArgsConstructor
 @SessionAttributes("requestLogin")
-public class MemberController {
+public class MemberController implements ExceptionProcessor {
 
     private final JoinValidator joinValidator;
     private final MemberSaveService memberSaveService;
-    private final MemberUtil memberUtil;
-    private final BoardRepository boardRepository;
 
     @ModelAttribute
     public RequestLogin requestLogin() {
@@ -39,6 +29,10 @@ public class MemberController {
 
     @GetMapping("/join")
     public String join(@ModelAttribute RequestJoin form) {
+//        boolean result = false;
+//        if (!result) {
+//            throw new AlertRedirectException("테스트 예외", "/mypage", HttpStatus.BAD_REQUEST);
+//        }
         return "front/member/join";
     }
 
@@ -71,55 +65,5 @@ public class MemberController {
         return "front/member/login";
     }
 
-    @ResponseBody
-    @GetMapping("/test")
-    public void test(Principal principal) {
-        log.info("로그인 아이디: {}", principal.getName());
-    }
 
-    @ResponseBody
-    @GetMapping("/test2")
-    public void test2(@AuthenticationPrincipal MemberInfo memberInfo) {
-        log.info("로그인 회원: {}", memberInfo.toString());
-    }
-
-    @ResponseBody
-    @GetMapping("/test3")
-    public void test3() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-
-
-        log.info("로그인 상태: {}", authentication.isAuthenticated());
-        if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof MemberInfo) { // 로그인 상태 - UserDetails 구현체(getPrincipal())
-            MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();
-            log.info("로그인 회원: {}", memberInfo.toString());
-        } else { // 미로그인 상태 - String / anonymousUser (getPrincipal())
-            log.info("getPrincipal(): {}", authentication.getPrincipal());
-        }
-    }
-
-    @ResponseBody
-    @GetMapping("/test4")
-    public void test4() {
-        log.info("로그인 여부: {}", memberUtil.isLogin());
-        log.info("로그인 회원: {}", memberUtil.getMember());
-    }
-
-    @ResponseBody
-    @GetMapping("/test5")
-    public void test5() {
-        /*
-        Board board = Board.builder()
-                .bId("freeTalk")
-                .bName("자유 게시판")
-                .build();
-
-        boardRepository.saveAndFlush(board);
-
-         */
-        Board board = boardRepository.findById("freeTalk").orElse(null);
-        board.setBName("(수정)자유 게시판");
-        boardRepository.saveAndFlush(board);
-    }
 }
