@@ -1,5 +1,6 @@
 package org.zzzang.global.configs;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +16,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         /* 로그인, 로그아웃 S */
+        /* 로그인, 로그아웃 S */
         http.formLogin(f -> {
             f.loginPage("/member/login")
                     .usernameParameter("email")
@@ -24,20 +25,32 @@ public class SecurityConfig {
                     .failureHandler(new LoginFailureHandler());
         });
 
+
         http.logout(f -> {
             f.logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                     .logoutSuccessUrl("/member/login");
+
         });
         /* 로그인, 로그아웃 E */
 
         /* 인가(접근 통제) 설정 S */
-        http.authorizeRequests(c -> {
-            c.requestMatchers("/mypage/**").authenticated()    // 회원 전용
+        http.authorizeHttpRequests(c -> {
+            /*
+            c.requestMatchers("/member/**").anonymous()
+                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                    .anyRequest().authenticated();
+            */
+            c.requestMatchers("/mypage/**").authenticated() // 회원 전용
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .anyRequest().permitAll();
         });
 
+        http.exceptionHandling(c -> {
+            c.authenticationEntryPoint(new org.zzzang.member.services.MemberAuthenticationEntryPoint());
+        });
         /* 인가(접근 통제) 설정 E */
+
+
 
         return http.build();
     }
