@@ -10,6 +10,7 @@ import java.util.Map;
 
 @Getter @Setter
 public class CommonException extends RuntimeException {
+    private boolean errorCode;
     private HttpStatus status;
     private Map<String, List<String>> errorMessages;
 
