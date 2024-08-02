@@ -9,6 +9,8 @@ import org.zzzang.global.exceptions.script.AlertBackException;
 import org.zzzang.global.exceptions.script.AlertException;
 import org.zzzang.global.exceptions.script.AlertRedirectException;
 
+import java.nio.file.AccessDeniedException;
+
 public interface ExceptionProcessor {
     @ExceptionHandler(Exception.class)
     default ModelAndView errorHandler(Exception e, HttpServletRequest request) {
@@ -16,6 +18,8 @@ public interface ExceptionProcessor {
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         String tpl = "error/error";
+        
+        
         if (e instanceof CommonException commonException) {
             status = commonException.getStatus();
 
@@ -38,6 +42,8 @@ public interface ExceptionProcessor {
 
                 mv.addObject("script", script);
             }
+        } else if (e instanceof AccessDeniedException) {
+            status = HttpStatus.UNAUTHORIZED;
         }
 
         String url = request.getRequestURI();
