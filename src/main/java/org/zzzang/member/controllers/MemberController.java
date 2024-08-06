@@ -18,11 +18,13 @@ import org.zzzang.member.validators.JoinValidator;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 @SessionAttributes("requestLogin")
+// 컨트롤러가 반환하는 모든 모델에서 "requestLogin" 속성이 발견되면 이를 세션에 저장
 public class MemberController implements ExceptionProcessor {
 
     private final JoinValidator joinValidator;
     private final MemberSaveService memberSaveService;
 
+    //세션에 이미 requestLogin 속성이 존재하면, 세션에서 해당 객체를 가져오고, 그렇지 않으면 새로 생성된 객체를 세션에 저장
     @ModelAttribute
     public RequestLogin requestLogin() {
         return new RequestLogin();
