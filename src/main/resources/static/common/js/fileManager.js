@@ -27,6 +27,11 @@ const fileManager = {
             if (location && location.trim()) {
                 formData.append("location", location.trim());
             }
+
+            const { ajaxLoad } = commonLib;
+
+            ajaxLoad('/file/upload', 'POST', formData);
+
         } catch (e) {
             console.error(e);
             alert(e.message);
