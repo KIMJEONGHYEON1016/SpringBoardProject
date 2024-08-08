@@ -36,7 +36,7 @@ public class MemberController implements ExceptionProcessor {
     }
 
     @GetMapping("/join")
-    public String join(@ModelAttribute RequestJoin form) {
+    public String join(@ModelAttribute RequestJoin form, Model model) {
 //        boolean result = false;
 //        if (!result) {
 //            throw new AlertRedirectException("테스트 예외", "/mypage", HttpStatus.BAD_REQUEST);
@@ -47,7 +47,7 @@ public class MemberController implements ExceptionProcessor {
     }
 
     @PostMapping("/join")
-    public String joinPs(@Valid RequestJoin form, Errors errors) {
+    public String joinPs(@Valid RequestJoin form, Errors errors, Model model) {
         commonProcess("join", model);
 
         joinValidator.validate(form, errors);
@@ -62,7 +62,7 @@ public class MemberController implements ExceptionProcessor {
     }
 
     @GetMapping("/login")
-    public String login(@Valid @ModelAttribute RequestLogin form, Errors errors) {
+    public String login(@Valid @ModelAttribute RequestLogin form, Errors errors, Model model) {
         commonProcess("login", model);
 
         String code = form.getCode();

@@ -1,8 +1,10 @@
 package org.zzzang.file.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zzzang.file.entities.FileInfo;
@@ -10,6 +12,8 @@ import org.zzzang.file.services.FileDeleteService;
 import org.zzzang.file.services.FileDownloadService;
 import org.zzzang.file.services.FileInfoService;
 import org.zzzang.file.services.FileUploadService;
+import org.zzzang.global.Utils;
+import org.zzzang.global.exceptions.BadRequestException;
 import org.zzzang.global.exceptions.RestExceptionProcessor;
 import org.zzzang.global.rests.JSONData;
 
@@ -25,10 +29,15 @@ public class FileController implements RestExceptionProcessor {
     private final FileDownloadService downloadService;
     private final FileInfoService infoService;
     private final FileDeleteService deleteService;
+    private final Utils utils;
+
 
     @PostMapping("/upload")
-    public ResponseEntity<JSONData> upload(@RequestPart("file") MultipartFile[] files, @RequestParam(name="gid", required = false) String gid, @RequestParam(name="location", required = false) String location) {
-        List<FileInfo> itmes = uploadService.upload(files, gid, location);
+    public ResponseEntity<JSONData> upload(@RequestPart("file") MultipartFile[] files, @Valid RequestUpload form, Errors errors)  {
+        if (errors.hasErrors()) {
+            throw new BadRequestException(utils.getErrorMessages(errors));
+        }
+        List<FileInfo> itmes = uploadService.upload(files, form.getGid(), form.getLocation());
         HttpStatus status = HttpStatus.CREATED;
         JSONData data = new JSONData(itmes);
         data.setStatus(status);
