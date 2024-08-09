@@ -32,15 +32,17 @@ public class FileUploadService {
          * 4. 업로드한 파일 목록 반환
          */
 
+        //gid 설정
         gid = StringUtils.hasText(gid) ? gid : UUID.randomUUID().toString();
 
+        // 업로드 할 파일 빈 목록 생성
         List<FileInfo> uploadedFiles = new ArrayList<>();
 
         // 1. 파일 정보 저장
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();   // 업로드 파일 원래 이름
-            String contentType = file.getContentType();   // 파일 형식
-            String extension = fileName.substring(fileName.lastIndexOf("."));
+            String contentType = file.getContentType();   // 파일 형식 (image/jpeg)
+            String extension = fileName.substring(fileName.lastIndexOf("."));   // 확장자
 
             FileInfo fileInfo = FileInfo.builder()
                     .gid(gid)
@@ -54,15 +56,15 @@ public class FileUploadService {
 
             // 2. 파일을 서버로 이동
             long seq = fileInfo.getSeq();
-            String uploadDir = properties.getPath() + "/" + (seq % 10L);
-            File dir =  new File(uploadDir);
+            String uploadDir = properties.getPath() + "/" + (seq % 10L);    // 디렉토리 분산
+            File dir =  new File(uploadDir);    // 경로와 파일 사이 연결을 표현
             if (!dir.exists() || !dir.isDirectory()) {
                 dir.mkdir();
             }
 
             String uploadPath = uploadDir + "/" + seq + extension;
-            try {
-                file.transferTo(new File(uploadPath));
+            try {                                       // transferTo 메서드는 파일을 지정된 경로로 이동, 복사
+                file.transferTo(new File(uploadPath));  // 업로드된 파일을 uploadPath 경로에 저장
                 uploadedFiles.add(fileInfo);    // 업로드 성공 파일 정보
             } catch (IOException e) {
                 e.printStackTrace();

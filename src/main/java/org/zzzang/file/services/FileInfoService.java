@@ -92,7 +92,7 @@ public class FileInfoService {
      *
      * @param item
      */
-    public void addFileInfo(FileInfo item) {
+    public void addFileInfo(FileInfo item) {    // item 은 아까 build 했던 엔티티
         String fileUrl = getFileUrl(item);
         String filePath = getFilePath(item);
 

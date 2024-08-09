@@ -34,8 +34,9 @@ public class FileController implements RestExceptionProcessor {
     public ResponseEntity<JSONData> upload(@RequestPart("file") MultipartFile[] files,
                                            @Valid RequestUpload form, Errors errors) {
 
-        form.setFiles(files);
+        form.setFiles(files);   // 업로드 커맨드 객체에 파일 추가
 
+        // 검증 실패시 예외 발생
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
